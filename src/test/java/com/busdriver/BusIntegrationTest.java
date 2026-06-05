@@ -22,7 +22,7 @@ public class BusIntegrationTest {
     }
 
     @Test
-    public void testValidBusIsStoredCorrectly() {
+    public void test_4_1_ValidBusStoredCorrectly() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
         boolean result = repo.add(bus);
         assertTrue(result);
@@ -32,7 +32,7 @@ public class BusIntegrationTest {
     }
 
     @Test
-    public void testDuplicateBusIsRejected() {
+    public void test_4_2_DuplicateBusIDRejected() {
         Bus bus1 = new Bus("12345678", 40, 80.0, "Diesel");
         Bus bus2 = new Bus("12345678", 50, 60.0, "Hybrid");
         repo.add(bus1);
@@ -41,7 +41,7 @@ public class BusIntegrationTest {
     }
 
     @Test
-    public void testUpdateIsPersistedCorrectly() {
+    public void test_4_3_CapacityAndFuelTypeUpdatePersistedToFile() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
         repo.add(bus);
         repo.update("12345678", 30, 50.0, "Hybrid");
@@ -52,7 +52,7 @@ public class BusIntegrationTest {
     }
 
     @Test
-    public void testCountIsUpdatedCorrectly() {
+    public void test_4_4_BusCountUpdatesCorrectly() {
         assertEquals(0, repo.count());
         Bus bus1 = new Bus("12345678", 40, 80.0, "Diesel");
         Bus bus2 = new Bus("87654321", 50, 60.0, "Hybrid");
@@ -60,5 +60,39 @@ public class BusIntegrationTest {
         assertEquals(1, repo.count());
         repo.add(bus2);
         assertEquals(2, repo.count());
+    }
+
+    @Test
+    public void test_4_5_InvalidBusIDRejectedAndCountRemainsZero() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Bus("INVALID123", 40, 80.0, "Diesel"));
+        assertEquals(0, repo.count());
+    }
+
+    @Test
+    public void test_4_6_RetrieveNonExistentBusReturnsNull() {
+        Bus result = repo.retrieve("99999999");
+        assertNull(result);
+    }
+
+    @Test
+    public void test_4_7_MultipleBusesPersistedAndRetrievedCorrectly() {
+        Bus bus1 = new Bus("12345678", 40, 80.0, "Diesel");
+        Bus bus2 = new Bus("87654321", 50, 60.0, "Hybrid");
+        repo.add(bus1);
+        repo.add(bus2);
+        BusRepository reloadedRepo = new BusRepository(TEST_FILE);
+        assertEquals(40, reloadedRepo.retrieve("12345678").getCapacity());
+        assertEquals(50, reloadedRepo.retrieve("87654321").getCapacity());
+    }
+
+    @Test
+    public void test_4_8_CapacityIncreaseBlockedAndOriginalPreserved() {
+        Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
+        repo.add(bus);
+        assertThrows(IllegalArgumentException.class, () ->
+                repo.update("12345678", 60, 80.0, "Diesel"));
+        BusRepository reloadedRepo = new BusRepository(TEST_FILE);
+        assertEquals(40, reloadedRepo.retrieve("12345678").getCapacity());
     }
 }

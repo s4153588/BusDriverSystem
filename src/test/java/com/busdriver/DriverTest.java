@@ -8,143 +8,149 @@ public class DriverTest {
     // D1 - Driver ID Rules
 
     @Test
-    public void testValidDriverID() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
-        assertEquals("23@@!!@@AB", driver.getDriverID());
+    public void test_1_1_01_ValidDriverIDAccepted() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        assertEquals("56!@21ABCD", driver.getDriverID());
     }
 
     @Test
-    public void testDriverIDTooShort() {
+    public void test_1_1_02_DriverIDFewerThan10CharsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@AB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "01-01-1990"));
+                new Driver("56!@ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
     }
 
     @Test
-    public void testDriverIDFirstTwoNotDigits() {
+    public void test_1_1_03_DriverIDMoreThan10CharsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("AB@@!!@@CD", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "01-01-1990"));
+                new Driver("56!@21ABCDEFX", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
     }
 
     @Test
-    public void testDriverIDFirstDigitOutOfRange() {
+    public void test_1_1_04_DriverIDFirstDigitOutOfRangeRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("13@@!!@@AB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "01-01-1990"));
+                new Driver("16!@21ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
     }
 
     @Test
-    public void testDriverIDLastTwoNotUppercase() {
+    public void test_1_1_05_DriverIDSecondDigitOutOfRangeRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@!!@@ab", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "01-01-1990"));
+                new Driver("50!@21ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
     }
 
     @Test
-    public void testDriverIDLessThanTwoSpecialChars() {
+    public void test_1_1_06_DriverIDWithoutTwoSpecialCharsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@ABCDEAB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "01-01-1990"));
-    }
-
-    // D2 - Address Format
-
-    @Test
-    public void testValidAddress() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
-        assertEquals("12|Main St|Melbourne|VIC|Australia", driver.getAddress());
+                new Driver("56A121ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
     }
 
     @Test
-    public void testAddressMissingParts() {
+    public void test_1_1_07_DriverIDEndingWithLowercaseRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne", "01-01-1990"));
+                new Driver("56!@21ABcd", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000"));
+    }
+
+    // D2 - Address Format Validation
+
+    @Test
+    public void test_1_2_01_ValidAddressAccepted() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        assertEquals("124|La Trobe St|Melbourne|VIC|Australia", driver.getAddress());
     }
 
     @Test
-    public void testAddressEmptyPart() {
+    public void test_1_2_02_AddressWithCommasRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                        "12||Melbourne|VIC|Australia", "01-01-1990"));
-    }
-
-    // D3 - Birthdate Format
-
-    @Test
-    public void testValidBirthdate() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "15-06-1990");
-        assertEquals("15-06-1990", driver.getBirthdate());
+                new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                        "124,La Trobe St,Melbourne,VIC,Australia", "12-02-2000"));
     }
 
     @Test
-    public void testInvalidBirthdateFormat() {
+    public void test_1_2_03_AddressWithMissingFieldsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "1990-06-15"));
+                new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC", "12-02-2000"));
+    }
+
+    // D3 - Birthday Format Validation
+
+    @Test
+    public void test_1_3_01_ValidBirthdateAccepted() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        assertEquals("12-02-2000", driver.getBirthdate());
     }
 
     @Test
-    public void testInvalidBirthdateValue() {
+    public void test_1_3_02_BirthdateInWrongFormatRejected() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                        "12|Main St|Melbourne|VIC|Australia", "32-13-1990"));
-    }
-
-    // D4 - License Update Restriction
-
-    @Test
-    public void testLicenseUpdateAllowedUnder10Years() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
-        driver.setLicenseType("Light");
-        assertEquals("Light", driver.getLicenseType());
+                new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "2000-02-12"));
     }
 
     @Test
-    public void testLicenseUpdateBlockedOver10Years() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 11, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+    public void test_1_3_03_InvalidCalendarDateRejected() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                        "124|La Trobe St|Melbourne|VIC|Australia", "42-15-2000"));
+    }
+
+    // D4 - License Update Restriction Validation
+
+    @Test
+    public void test_1_4_01_LicenseUpdateAllowedUnder10Years() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Light",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        driver.setLicenseType("Heavy");
+        assertEquals("Heavy", driver.getLicenseType());
+    }
+
+    @Test
+    public void test_1_4_02_LicenseUpdateBlockedOver10Years() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 15, "Light",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
         assertThrows(UnsupportedOperationException.class, () ->
-                driver.setLicenseType("Light"));
+                driver.setLicenseType("Heavy"));
     }
 
     @Test
-    public void testLicenseUpdateBlockedExactly11Years() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 11, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
-        assertThrows(UnsupportedOperationException.class, () ->
-                driver.setLicenseType("Medium"));
+    public void test_1_4_03_OtherDetailsCanBeUpdatedOver10Years() {
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 15, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        driver.setAddress("99|Queen St|Brisbane|QLD|Australia");
+        assertEquals("99|Queen St|Brisbane|QLD|Australia", driver.getAddress());
     }
 
-    // D5 - Immutable Fields
+    // D5 - Immutable Field Validations
 
     @Test
-    public void testDriverIDCannotBeChanged() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+    public void test_1_5_01_DriverIDCannotBeModified() {
+        Driver driver = new Driver("56!@1234AB", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
         assertThrows(UnsupportedOperationException.class, () ->
-                driver.setDriverID("99@@!!@@ZZ"));
-    }
-
-    @Test
-    public void testNameCannotBeChanged() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
-        assertThrows(UnsupportedOperationException.class, () ->
-                driver.setName("Jane"));
+                driver.setDriverID("67#@5678CD"));
     }
 
     @Test
-    public void testDriverIDRemainsAfterUpdate() {
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+    public void test_1_5_02_DriverNameCannotBeModified() {
+        Driver driver = new Driver("56!@1234AB", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
         assertThrows(UnsupportedOperationException.class, () ->
-                driver.setDriverID("55@@!!@@ZZ"));
-        assertEquals("23@@!!@@AB", driver.getDriverID());
+                driver.setName("David Brown"));
+    }
+
+    @Test
+    public void test_1_5_03_MutableFieldsCanBeModified() {
+        Driver driver = new Driver("56!@1234AB", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "12-02-2000");
+        driver.setAddress("99|Queen St|Brisbane|QLD|Australia");
+        assertEquals("99|Queen St|Brisbane|QLD|Australia", driver.getAddress());
     }
 }

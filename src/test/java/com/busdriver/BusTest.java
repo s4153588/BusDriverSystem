@@ -8,31 +8,31 @@ public class BusTest {
     // B1 - Bus ID Rules
 
     @Test
-    public void testValidBusID() {
+    public void test_2_1_01_ValidBusIDAccepted() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
         assertEquals("12345678", bus.getBusID());
     }
 
     @Test
-    public void testBusIDTooShort() {
+    public void test_2_1_02_BusIDFewerThan8DigitsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
                 new Bus("1234", 40, 80.0, "Diesel"));
     }
 
     @Test
-    public void testBusIDContainsLetters() {
+    public void test_2_1_03_BusIDContainingLettersRejected() {
         assertThrows(IllegalArgumentException.class, () ->
                 new Bus("1234567A", 40, 80.0, "Diesel"));
     }
 
     @Test
-    public void testBusIDTooLong() {
+    public void test_2_1_04_BusIDMoreThan8DigitsRejected() {
         assertThrows(IllegalArgumentException.class, () ->
                 new Bus("123456789", 40, 80.0, "Diesel"));
     }
 
     @Test
-    public void testBusIDAllZeros() {
+    public void test_2_1_05_BusIDAllZerosAccepted() {
         Bus bus = new Bus("00000000", 40, 80.0, "Diesel");
         assertEquals("00000000", bus.getBusID());
     }
@@ -40,21 +40,21 @@ public class BusTest {
     // B2 - Capacity Update Restriction
 
     @Test
-    public void testCapacityCanDecrease() {
+    public void test_2_2_01_BusCapacityCanDecrease() {
         Bus bus = new Bus("12345678", 50, 80.0, "Diesel");
         bus.setCapacity(40);
         assertEquals(40, bus.getCapacity());
     }
 
     @Test
-    public void testCapacityCannotIncrease() {
+    public void test_2_2_02_BusCapacityCannotIncrease() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
         assertThrows(IllegalArgumentException.class, () ->
                 bus.setCapacity(50));
     }
 
     @Test
-    public void testCapacityCanRemainSame() {
+    public void test_2_2_03_BusCapacityCanRemainSame() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
         bus.setCapacity(40);
         assertEquals(40, bus.getCapacity());
@@ -63,86 +63,86 @@ public class BusTest {
     // B3 - Driver Age Restriction
 
     @Test
-    public void testDriverOver50CannotDriveLargeBus() {
+    public void test_2_3_01_DriverOver50CannotDriveLargeBus() {
         Bus bus = new Bus("12345678", 50, 80.0, "Diesel");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1970");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1970");
         assertFalse(bus.isDriverAgeAllowed(driver));
     }
 
     @Test
-    public void testDriverUnder50CanDriveLargeBus() {
+    public void test_2_3_02_DriverUnder50CanDriveLargeBus() {
         Bus bus = new Bus("12345678", 50, 80.0, "Diesel");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverAgeAllowed(driver));
     }
 
     @Test
-    public void testDriverOver50CanDriveSmallBus() {
+    public void test_2_3_03_DriverOver50CanDriveSmallBus() {
         Bus bus = new Bus("12345678", 30, 80.0, "Diesel");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1970");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1970");
         assertTrue(bus.isDriverAgeAllowed(driver));
     }
 
     // B4 - Electric Bus Restriction
 
     @Test
-    public void testDriverWith5YearsCanDriveElectric() {
+    public void test_2_4_01_DriverWith5YearsCanDriveElectric() {
         Bus bus = new Bus("12345678", 40, 80.0, "Electricity");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverExperienceAllowed(driver));
     }
 
     @Test
-    public void testDriverUnder5YearsCannotDriveElectric() {
+    public void test_2_4_02_DriverUnder5YearsCannotDriveElectric() {
         Bus bus = new Bus("12345678", 40, 80.0, "Electricity");
-        Driver driver = new Driver("23@@!!@@AB", "John", 3, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 3, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertFalse(bus.isDriverExperienceAllowed(driver));
     }
 
     @Test
-    public void testDriverUnder5YearsCanDriveDiesel() {
+    public void test_2_4_03_DriverUnder5YearsCanDriveDiesel() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
-        Driver driver = new Driver("23@@!!@@AB", "John", 3, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 3, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverExperienceAllowed(driver));
     }
 
     // B5 - Driver Licence Restriction
 
     @Test
-    public void testHeavyLicenceCanDriveElectric() {
+    public void test_2_5_01_HeavyLicenceCanDriveElectric() {
         Bus bus = new Bus("12345678", 40, 80.0, "Electricity");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Heavy",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Heavy",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverLicenceAllowed(driver));
     }
 
     @Test
-    public void testPublicTransportLicenceCanDriveHybrid() {
+    public void test_2_5_02_PublicTransportLicenceCanDriveHybrid() {
         Bus bus = new Bus("12345678", 40, 80.0, "Hybrid");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "PublicTransport",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "PublicTransport",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverLicenceAllowed(driver));
     }
 
     @Test
-    public void testLightLicenceCannotDriveElectric() {
+    public void test_2_5_03_LightLicenceCannotDriveElectric() {
         Bus bus = new Bus("12345678", 40, 80.0, "Electricity");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Light",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Light",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertFalse(bus.isDriverLicenceAllowed(driver));
     }
 
     @Test
-    public void testLightLicenceCanDriveDiesel() {
+    public void test_2_5_04_LightLicenceCanDriveDiesel() {
         Bus bus = new Bus("12345678", 40, 80.0, "Diesel");
-        Driver driver = new Driver("23@@!!@@AB", "John", 5, "Light",
-                "12|Main St|Melbourne|VIC|Australia", "01-01-1990");
+        Driver driver = new Driver("56!@21ABCD", "John Smith", 5, "Light",
+                "124|La Trobe St|Melbourne|VIC|Australia", "01-01-1990");
         assertTrue(bus.isDriverLicenceAllowed(driver));
     }
 }
